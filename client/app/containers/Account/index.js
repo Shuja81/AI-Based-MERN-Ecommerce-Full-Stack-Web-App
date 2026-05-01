@@ -4,42 +4,47 @@
  *
  */
 
-import React from 'react';
-import { connect } from 'react-redux';
+import React from "react";
+import { connect } from "react-redux";
 
-import actions from '../../actions';
+import actions from "../../actions";
 
-import AccountDetails from '../../components/Manager/AccountDetails';
-import SubPage from '../../components/Manager/SubPage';
+import AccountDetails from "../../components/Manager/AccountDetails";
+import DashboardAnalyticsSummary from "../../components/Manager/Dashboard/AnalyticsSummary";
+import SubPage from "../../components/Manager/SubPage";
 
 class Account extends React.PureComponent {
-  componentDidMount() {
-    // this.props.fetchProfile();
-  }
+    componentDidMount() {
+        // this.props.fetchProfile();
+    }
 
-  render() {
-    const { user, accountChange, updateProfile } = this.props;
+    render() {
+        const { user, accountChange, updateProfile } = this.props;
 
-    return (
-      <div className='account'>
-        <SubPage title={'Account Details'} isMenuOpen={null}>
-          <AccountDetails
-            user={user}
-            accountChange={accountChange}
-            updateProfile={updateProfile}
-          />
-        </SubPage>
-      </div>
-    );
-  }
+        return (
+            <div className="account">
+                <SubPage title={"Account Details"} isMenuOpen={null}>
+                    <AccountDetails
+                        user={user}
+                        accountChange={accountChange}
+                        updateProfile={updateProfile}
+                    />
+                </SubPage>
+
+                <SubPage title={"Dashboard Analytics"} isMenuOpen={null}>
+                    <DashboardAnalyticsSummary user={user} />
+                </SubPage>
+            </div>
+        );
+    }
 }
 
-const mapStateToProps = state => {
-  return {
-    user: state.account.user,
-    resetFormData: state.resetPassword.resetFormData,
-    formErrors: state.resetPassword.formErrors
-  };
+const mapStateToProps = (state) => {
+    return {
+        user: state.account.user,
+        resetFormData: state.resetPassword.resetFormData,
+        formErrors: state.resetPassword.formErrors,
+    };
 };
 
 export default connect(mapStateToProps, actions)(Account);

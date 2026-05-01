@@ -7,6 +7,8 @@ const { spawn, exec } = require("child_process");
 const path = require("path");
 const os = require("os");
 
+const pythonBin = process.env.PYTHON || process.env.PYTHON_PATH || "python";
+
 /**
  * Get the path to analytics scripts
  */
@@ -26,8 +28,13 @@ const executePythonScript = (scriptName) => {
         let errorData = "";
 
         // Use spawn for better handling of large outputs
-        const pythonProcess = spawn("python", [scriptPath], {
+        const pythonProcess = spawn(pythonBin, [scriptPath], {
             cwd: path.dirname(scriptPath),
+            env: {
+                ...process.env,
+                MONGO_URI: process.env.MONGO_URI || "",
+                MONGO_DB_NAME: process.env.MONGO_DB_NAME || "",
+            },
             timeout: 60000, // 60 second timeout
         });
 
@@ -44,10 +51,12 @@ const executePythonScript = (scriptName) => {
         // Handle process completion
         pythonProcess.on("close", (code) => {
             if (code !== 0) {
-                console.error(`Python script error: ${errorData}`);
+                console.error(
+                    `Python script error (code ${code}): ${errorData || outputData}`,
+                );
                 return reject({
                     message: `Python script failed with code ${code}`,
-                    error: errorData,
+                    error: errorData || outputData || `Exit code ${code}`,
                 });
             }
 
@@ -64,7 +73,11 @@ const executePythonScript = (scriptName) => {
                 }
             } catch (parseError) {
                 console.error(`JSON parse error: ${parseError.message}`);
-                resolve({ raw_output: outputData });
+                reject({
+                    message: "Failed to parse Python script output",
+                    error: parseError.message,
+                    raw_output: outputData,
+                });
             }
         });
 
@@ -175,26 +188,52 @@ except Exception as e:
 `;
 
         return new Promise((resolve) => {
-            const pythonProcess = spawn("python", ["-c", testScript], {
+            const pythonProcess = spawn(pythonBin, ["-c", testScript], {
                 timeout: 10000,
             });
 
             let output = "";
+            let errorOutput = "";
+
             pythonProcess.stdout.on("data", (data) => {
                 output += data.toString();
             });
 
-            pythonProcess.on("close", () => {
+            pythonProcess.stderr.on("data", (data) => {
+                errorOutput += data.toString();
+            });
+
+            pythonProcess.on("close", (code) => {
+                if (code !== 0) {
+                    return resolve({
+                        status: "unhealthy",
+                        error:
+                            errorOutput ||
+                            output ||
+                            `Python exited with code ${code}`,
+                    });
+                }
+
                 try {
                     const result = JSON.parse(output);
                     resolve(result);
-                } catch {
-                    resolve({ status: "healthy", note: "Python available" });
+                } catch (parseErr) {
+                    resolve({
+                        status: "unhealthy",
+                        error:
+                            errorOutput ||
+                            parseErr.message ||
+                            "Unexpected health check output",
+                        raw_output: output,
+                    });
                 }
             });
 
-            pythonProcess.on("error", () => {
-                resolve({ status: "unhealthy", error: "Python not available" });
+            pythonProcess.on("error", (err) => {
+                resolve({
+                    status: "unhealthy",
+                    error: `Python not available: ${err.message}`,
+                });
             });
         });
     } catch (error) {

@@ -160,7 +160,7 @@ Create `.env` files for both client and server.
 ```env
 MONGO_URI=your_mongo_uri
 JWT_SECRET=your_secret
-BASE_API_URL=v1
+BASE_API_URL=api/v1
 ```
 
 **Client `.env`**

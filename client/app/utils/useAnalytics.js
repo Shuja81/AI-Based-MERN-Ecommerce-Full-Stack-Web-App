@@ -1,55 +1,67 @@
-import { useState, useEffect } from 'react';
-import analyticsAPI from '../utils/analyticsAPI';
+import { useState, useEffect } from "react";
+import analyticsAPI from "../utils/analyticsAPI";
 
 /**
  * Custom hook for fetching analytics data
  * Handles loading and error states
  */
-export const useAnalytics = (type = 'sales') => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+export const useAnalytics = (type = "sales", query = {}, enabled = true) => {
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        let response;
-        switch (type) {
-          case 'sales':
-            response = await analyticsAPI.getSalesAnalytics();
-            break;
-          case 'users':
-            response = await analyticsAPI.getUserAnalytics();
-            break;
-          case 'recommendations':
-            response = await analyticsAPI.getRecommendations();
-            break;
-          case 'anomalies':
-            response = await analyticsAPI.getAnomalies();
-            break;
-          default:
-            throw new Error(`Unknown analytics type: ${type}`);
+    useEffect(() => {
+        if (!enabled) {
+            setData(null);
+            setLoading(false);
+            setError(null);
+            return;
         }
 
-        if (response.success) {
-          setData(response.data);
-        } else {
-          setError(response.error || 'Failed to fetch analytics');
-        }
-      } catch (err) {
-        setError(err.message || 'Error fetching analytics');
-      } finally {
-        setLoading(false);
-      }
-    };
+        const fetchData = async () => {
+            setLoading(true);
+            setError(null);
 
-    fetchData();
-  }, [type]);
+            try {
+                let response;
+                switch (type) {
+                    case "sales":
+                        response = await analyticsAPI.getSalesAnalytics(
+                            query.merchantId,
+                        );
+                        break;
+                    case "users":
+                        response = await analyticsAPI.getUserAnalytics();
+                        break;
+                    case "recommendations":
+                        response = await analyticsAPI.getRecommendations(
+                            query.userId,
+                            query.merchantId,
+                        );
+                        break;
+                    case "anomalies":
+                        response = await analyticsAPI.getAnomalies();
+                        break;
+                    default:
+                        throw new Error(`Unknown analytics type: ${type}`);
+                }
 
-  return { data, loading, error };
+                if (response.success) {
+                    setData(response.data);
+                } else {
+                    setError(response.error || "Failed to fetch analytics");
+                }
+            } catch (err) {
+                setError(err.message || "Error fetching analytics");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [enabled, type, JSON.stringify(query)]);
+
+    return { data, loading, error };
 };
 
 export default useAnalytics;

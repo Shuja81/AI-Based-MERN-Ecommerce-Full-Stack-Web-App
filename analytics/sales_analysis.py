@@ -3,17 +3,39 @@ Sales Analysis Module
 Analyzes sales data from MongoDB orders collection
 """
 
+import os
+from urllib.parse import urlparse
 import pandas as pd
 from pymongo import MongoClient
 from datetime import datetime, timedelta
 import json
 
 
+def get_mongo_uri():
+    return os.environ.get("MONGO_URI", "mongodb://localhost:27017")
+
+
+def get_mongo_db_name(default_name="ecommerce"):
+    env_name = os.environ.get("MONGO_DB_NAME")
+    if env_name:
+        return env_name
+
+    uri = os.environ.get("MONGO_URI", "")
+    if uri:
+        parsed = urlparse(uri)
+        if parsed.path and parsed.path != "/":
+            return parsed.path.lstrip("/")
+
+    return default_name
+
+
 class SalesAnalyzer:
-    def __init__(self, mongo_uri="mongodb://localhost:27017", db_name="ecommerce"):
+    def __init__(self, mongo_uri=None, db_name=None):
         """Initialize MongoDB connection"""
-        self.client = MongoClient(mongo_uri)
-        self.db = self.client[db_name]
+        self.mongo_uri = mongo_uri or get_mongo_uri()
+        self.db_name = db_name or get_mongo_db_name()
+        self.client = MongoClient(self.mongo_uri)
+        self.db = self.client[self.db_name]
         self.orders = self.db.orders
 
     def get_total_revenue(self):

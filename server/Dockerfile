@@ -1,17 +1,24 @@
-# Use official Node.js 14 as base image
-FROM node:16.20.2-buster-slim
+# Use official Node.js 16 on Debian Bullseye
+FROM node:16.20.2-bullseye-slim
 
 # Set working directory
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
-
-# Install dependencies
+# Copy server package metadata and install dependencies
+COPY server/package*.json ./
 RUN npm install
 
+# Install Python and analytics dependencies
+RUN apt-get update \
+    && apt-get install -y python3 python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy analytics scripts and requirements from repo root
+COPY analytics ./analytics
+RUN python3 -m pip install --no-cache-dir -r analytics/requirements.txt
+
 # Copy the rest of the server code
-COPY . .
+COPY server/. .
 
 # Expose port 3000 for the server
 EXPOSE 3000

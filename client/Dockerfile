@@ -1,5 +1,5 @@
-# Use official Node.js 14 as base image
-FROM node:16.20.2-buster-slim as build
+# Use official Node.js 16 on Debian Bullseye
+FROM node:16.20.2-bullseye-slim as build
 
 # Set working directory
 WORKDIR /usr/src/app
