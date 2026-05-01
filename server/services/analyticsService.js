@@ -3,17 +3,20 @@
  * Handles execution of Python analytics scripts and parses results
  */
 
-const { spawn, exec } = require("child_process");
+const { PythonShell } = require("python-shell");
 const path = require("path");
-const os = require("os");
+const fs = require("fs");
 
-const pythonBin = process.env.PYTHON || process.env.PYTHON_PATH || "python";
+const pythonPath = process.env.PYTHON_PATH || "/usr/bin/python3";
+
+const analyticsBasePath =
+    process.env.ANALYTICS_PATH || path.join(__dirname, "../../analytics");
 
 /**
  * Get the path to analytics scripts
  */
 const getAnalyticsPath = (scriptName) => {
-    return path.join(__dirname, "../../analytics", scriptName);
+    return path.join(analyticsBasePath, scriptName);
 };
 
 /**
@@ -24,221 +27,171 @@ const getAnalyticsPath = (scriptName) => {
 const executePythonScript = (scriptName) => {
     return new Promise((resolve, reject) => {
         const scriptPath = getAnalyticsPath(scriptName);
-        let outputData = "";
-        let errorData = "";
 
-        // Use spawn for better handling of large outputs
-        const pythonProcess = spawn(pythonBin, [scriptPath], {
-            cwd: path.dirname(scriptPath),
+        if (!fs.existsSync(scriptPath)) {
+            return reject({
+                message: "Python script not found",
+                error: `Script ${scriptName} does not exist at ${scriptPath}`,
+                scriptPath,
+            });
+        }
+
+        const options = {
+            mode: "text",
+            pythonPath,
+            pythonOptions: ["-u"],
+            scriptPath: path.dirname(scriptPath),
+            args: [],
             env: {
                 ...process.env,
                 MONGO_URI: process.env.MONGO_URI || "",
                 MONGO_DB_NAME: process.env.MONGO_DB_NAME || "",
             },
-            timeout: 60000, // 60 second timeout
+        };
+
+        const timeoutMs = Number(process.env.PYTHON_SCRIPT_TIMEOUT_MS || 60000);
+        let timedOut = false;
+
+        const pyshell = new PythonShell(path.basename(scriptPath), options);
+        const timeoutId = setTimeout(() => {
+            timedOut = true;
+            pyshell.kill("SIGKILL");
+        }, timeoutMs);
+
+        let stderrLines = [];
+
+        pyshell.on("stderr", (stderr) => {
+            stderrLines.push(stderr.toString());
         });
 
-        // Collect stdout
-        pythonProcess.stdout.on("data", (data) => {
-            outputData += data.toString();
-        });
+        pyshell.end((err, results) => {
+            clearTimeout(timeoutId);
 
-        // Collect stderr
-        pythonProcess.stderr.on("data", (data) => {
-            errorData += data.toString();
-        });
-
-        // Handle process completion
-        pythonProcess.on("close", (code) => {
-            if (code !== 0) {
-                console.error(
-                    `Python script error (code ${code}): ${errorData || outputData}`,
-                );
+            if (timedOut) {
                 return reject({
-                    message: `Python script failed with code ${code}`,
-                    error: errorData || outputData || `Exit code ${code}`,
+                    message: "Python script timed out",
+                    error: `Script ${scriptName} exceeded ${timeoutMs}ms`,
+                    scriptPath,
+                });
+            }
+
+            if (err) {
+                return reject({
+                    message: "Python script failed",
+                    error: err.message || err,
+                    scriptPath,
+                    stderr: stderrLines.join("\n"),
+                });
+            }
+
+            const output = Array.isArray(results) ? results.join("\n") : "";
+            const jsonMatch = output.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+
+            if (!jsonMatch) {
+                return resolve({
+                    success: false,
+                    raw_output: output,
+                    stderr: stderrLines.join("\n"),
                 });
             }
 
             try {
-                // Parse JSON output from Python script
-                // Python scripts output JSON using print(json.dumps(...))
-                const jsonMatch = outputData.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
-                if (jsonMatch) {
-                    const result = JSON.parse(jsonMatch[0]);
-                    resolve(result);
-                } else {
-                    // If no JSON found, return the raw output (for reports)
-                    resolve({ raw_output: outputData });
-                }
+                resolve(JSON.parse(jsonMatch[0]));
             } catch (parseError) {
-                console.error(`JSON parse error: ${parseError.message}`);
                 reject({
                     message: "Failed to parse Python script output",
                     error: parseError.message,
-                    raw_output: outputData,
+                    raw_output: output,
+                    scriptPath,
+                    stderr: stderrLines.join("\n"),
                 });
             }
-        });
-
-        // Handle process errors
-        pythonProcess.on("error", (err) => {
-            reject({
-                message: "Failed to execute Python script",
-                error: err.message,
-            });
         });
     });
 };
 
-/**
- * Get Sales Analysis Data
- */
-const getSalesAnalysis = async () => {
+const wrapResult = async (fn, fallbackMessage) => {
     try {
-        const result = await executePythonScript("sales_analysis.py");
-        return {
-            success: true,
-            data: result,
-        };
+        const result = await fn();
+        return { success: true, data: result };
     } catch (error) {
-        throw {
+        return {
             success: false,
-            message: error.message || "Sales analysis failed",
-            error: error.error,
+            message: error.message || fallbackMessage,
+            error: error.error || error.stderr || error,
         };
     }
 };
 
-/**
- * Get User Behavior Analysis
- */
-const getUserBehaviorAnalysis = async () => {
-    try {
-        const result = await executePythonScript("user_behavior.py");
-        return {
-            success: true,
-            data: result,
-        };
-    } catch (error) {
-        throw {
-            success: false,
-            message: error.message || "User behavior analysis failed",
-            error: error.error,
-        };
-    }
-};
+const getSalesAnalysis = () =>
+    wrapResult(
+        () => executePythonScript("sales_analysis.py"),
+        "Sales analysis failed",
+    );
 
-/**
- * Get Product Recommendations
- */
-const getRecommendations = async (userId = null) => {
-    try {
-        // For now, we call the recommendation script without parameters
-        // You can extend this to pass userId if needed
-        const result = await executePythonScript("recommendation.py");
-        return {
-            success: true,
-            data: result,
-        };
-    } catch (error) {
-        throw {
-            success: false,
-            message: error.message || "Recommendations failed",
-            error: error.error,
-        };
-    }
-};
+const getUserBehaviorAnalysis = () =>
+    wrapResult(
+        () => executePythonScript("user_behavior.py"),
+        "User behavior analysis failed",
+    );
 
-/**
- * Get Anomaly Detection Results
- */
-const getAnomalyDetection = async () => {
-    try {
-        const result = await executePythonScript("anomaly_detection.py");
-        return {
-            success: true,
-            data: result,
-        };
-    } catch (error) {
-        throw {
-            success: false,
-            message: error.message || "Anomaly detection failed",
-            error: error.error,
-        };
-    }
-};
+const getRecommendations = () =>
+    wrapResult(
+        () => executePythonScript("recommendation.py"),
+        "Recommendations failed",
+    );
 
-/**
- * Health Check - Verify Python and MongoDB connectivity
- */
+const getAnomalyDetection = () =>
+    wrapResult(
+        () => executePythonScript("anomaly_detection.py"),
+        "Anomaly detection failed",
+    );
+
 const healthCheck = async () => {
-    try {
-        // Try a simple MongoDB connection test
-        const testScript = `
+    const inlineScript = `
 import json
 from pymongo import MongoClient
 
 try:
     client = MongoClient("mongodb://localhost:27017", serverSelectionTimeoutMS=5000)
-    client.server_info()  # Force connection attempt
+    client.server_info()
     print(json.dumps({"status": "healthy", "mongodb": "connected"}))
 except Exception as e:
     print(json.dumps({"status": "unhealthy", "error": str(e)}))
 `;
 
-        return new Promise((resolve) => {
-            const pythonProcess = spawn(pythonBin, ["-c", testScript], {
-                timeout: 10000,
-            });
+    return new Promise((resolve) => {
+        const options = {
+            mode: "text",
+            pythonPath,
+            pythonOptions: ["-u"],
+            env: {
+                ...process.env,
+                MONGO_URI: process.env.MONGO_URI || "",
+                MONGO_DB_NAME: process.env.MONGO_DB_NAME || "",
+            },
+        };
 
-            let output = "";
-            let errorOutput = "";
+        PythonShell.runString(inlineScript, options, (err, results) => {
+            if (err) {
+                return resolve({
+                    status: "unhealthy",
+                    error: err.message || err,
+                });
+            }
 
-            pythonProcess.stdout.on("data", (data) => {
-                output += data.toString();
-            });
-
-            pythonProcess.stderr.on("data", (data) => {
-                errorOutput += data.toString();
-            });
-
-            pythonProcess.on("close", (code) => {
-                if (code !== 0) {
-                    return resolve({
-                        status: "unhealthy",
-                        error:
-                            errorOutput ||
-                            output ||
-                            `Python exited with code ${code}`,
-                    });
-                }
-
-                try {
-                    const result = JSON.parse(output);
-                    resolve(result);
-                } catch (parseErr) {
-                    resolve({
-                        status: "unhealthy",
-                        error:
-                            errorOutput ||
-                            parseErr.message ||
-                            "Unexpected health check output",
-                        raw_output: output,
-                    });
-                }
-            });
-
-            pythonProcess.on("error", (err) => {
+            const output = Array.isArray(results) ? results.join("\n") : "";
+            try {
+                resolve(JSON.parse(output));
+            } catch (parseError) {
                 resolve({
                     status: "unhealthy",
-                    error: `Python not available: ${err.message}`,
+                    error: parseError.message || "Invalid health check JSON",
+                    raw_output: output,
                 });
-            });
+            }
         });
-    } catch (error) {
-        return { status: "unhealthy", error: error.message };
-    }
+    });
 };
 
 module.exports = {

@@ -15,7 +15,12 @@ RUN apt-get update \
 
 # Copy analytics scripts and requirements from repo root
 COPY analytics ./analytics
-RUN python3 -m pip install --no-cache-dir -r analytics/requirements.txt
+RUN python3 -m pip install --upgrade pip setuptools wheel \
+    && python3 -m pip install --no-cache-dir -r analytics/requirements.txt
+
+ENV PYTHON_PATH=/usr/bin/python3
+ENV ANALYTICS_PATH=/usr/src/app/analytics
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 # Copy the rest of the server code
 COPY server/. .
