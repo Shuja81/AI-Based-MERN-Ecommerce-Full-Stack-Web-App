@@ -8,9 +8,7 @@ const UserSchema = new Schema(
     {
         email: {
             type: String,
-            required: function () {
-                return this.provider === EMAIL_PROVIDER.Email;
-            },
+            required: true,
             unique: true,
             sparse: true,
         },
@@ -25,6 +23,7 @@ const UserSchema = new Schema(
         },
         password: {
             type: String,
+            required: true,
         },
         merchant: {
             type: Schema.Types.ObjectId,
@@ -35,12 +34,6 @@ const UserSchema = new Schema(
             type: String,
             required: true,
             default: EMAIL_PROVIDER.Email,
-        },
-        googleId: {
-            type: String,
-        },
-        facebookId: {
-            type: String,
         },
         avatar: {
             type: String,

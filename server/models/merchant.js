@@ -13,6 +13,11 @@ const MerchantSchema = new Schema(
         },
         email: {
             type: String,
+            unique: true,
+            sparse: true,
+        },
+        password: {
+            type: String,
         },
         phoneNumber: {
             type: String,
