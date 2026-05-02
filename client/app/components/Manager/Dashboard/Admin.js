@@ -23,6 +23,8 @@ import Brand from "../../../containers/Brand";
 import Merchant from "../../../containers/Merchant";
 import Review from "../../../containers/Review";
 import Wishlist from "../../../containers/WishList";
+import Support from "../../../containers/Support";
+import Authentication from "../../../containers/Authentication";
 import AnalyticsSummary from "./AnalyticsSummary";
 
 const Admin = (props) => {
@@ -84,6 +86,10 @@ const Admin = (props) => {
                             <Route
                                 path={`${basePrefix}/wishlist`}
                                 component={Wishlist}
+                            />
+                            <Route
+                                path={`${basePrefix}/support`}
+                                component={Authentication(Support)}
                             />
                             <Route path="*" component={Page404} />
                         </Switch>

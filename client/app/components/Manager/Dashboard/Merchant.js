@@ -17,6 +17,7 @@ import AccountSecurity from '../../../containers/AccountSecurity';
 import Address from '../../../containers/Address';
 import Product from '../../../containers/Product';
 import Brand from '../../../containers/Brand';
+import Category from '../../../containers/Category';
 import Order from '../../../containers/Order';
 import Wishlist from '../../../containers/WishList';
 
@@ -35,6 +36,7 @@ const Merchant = props => {
               <Route path='/dashboard/address' component={Address} />
               <Route path='/dashboard/product' component={Product} />
               <Route path='/dashboard/brand' component={Brand} />
+              <Route path='/dashboard/category' component={Category} />
               <Route path='/dashboard/orders' component={Order} />
               <Route path='/dashboard/wishlist' component={Wishlist} />
               <Route path='*' component={Page404} />

@@ -7,6 +7,7 @@
 import React from "react";
 
 import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 
 import actions from "../../actions";
 import { ROLES } from "../../constants";
@@ -25,6 +26,7 @@ class Dashboard extends React.PureComponent {
 
     render() {
         const { user, isLoading, isMenuOpen, toggleDashboardMenu } = this.props;
+        const basePrefix = this.props.match.path;
 
         if (isDisabledMerchantAccount(user))
             return <DisabledMerchantAccount user={user} />;
@@ -38,22 +40,11 @@ class Dashboard extends React.PureComponent {
                     <Admin
                         user={user}
                         isMenuOpen={isMenuOpen}
-                        links={
-                            user.role === ROLES.Admin
-                                ? dashboardLinks[ROLES.Admin].map((link) => ({
-                                      ...link,
-                                      prefix: "/admin",
-                                  }))
-                                : dashboardLinks[ROLES.SuperAdmin].map(
-                                      (link) => ({
-                                          ...link,
-                                          prefix: "/superadmin",
-                                      }),
-                                  )
-                        }
-                        basePrefix={
-                            user.role === ROLES.Admin ? "/admin" : "/superadmin"
-                        }
+                        links={dashboardLinks[user.role === ROLES.Admin ? ROLES.Admin : ROLES.SuperAdmin].map((link) => ({
+                              ...link,
+                              prefix: basePrefix,
+                          }))}
+                        basePrefix={basePrefix}
                         toggleMenu={toggleDashboardMenu}
                     />
                 ) : user.role === ROLES.Merchant && user.merchant ? (
@@ -84,4 +75,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, actions)(Dashboard);
+export default connect(mapStateToProps, actions)(withRouter(Dashboard));

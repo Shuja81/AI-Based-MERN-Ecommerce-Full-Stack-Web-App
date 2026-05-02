@@ -10,7 +10,6 @@ import { connect } from "react-redux";
 import actions from "../../actions";
 
 import AccountDetails from "../../components/Manager/AccountDetails";
-import DashboardAnalyticsSummary from "../../components/Manager/Dashboard/AnalyticsSummary";
 import SubPage from "../../components/Manager/SubPage";
 
 class Account extends React.PureComponent {
@@ -28,10 +27,6 @@ class Account extends React.PureComponent {
                         accountChange={accountChange}
                         updateProfile={updateProfile}
                     />
-                </SubPage>
-
-                <SubPage title={"Dashboard Analytics"} isMenuOpen={null}>
-                    <DashboardAnalyticsSummary user={user} />
                 </SubPage>
             </div>
         );

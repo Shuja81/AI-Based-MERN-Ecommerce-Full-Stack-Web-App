@@ -7,7 +7,7 @@
 import React from "react";
 
 import { connect } from "react-redux";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, withRouter } from "react-router-dom";
 
 import actions from "../../actions";
 import { ROLES } from "../../constants";
@@ -18,22 +18,22 @@ import Page404 from "../../components/Common/Page404";
 
 class Brand extends React.PureComponent {
     render() {
-        const { user } = this.props;
+        const { user, match } = this.props;
 
         return (
             <div className="brand-dashboard">
                 <Switch>
-                    <Route exact path="/dashboard/brand" component={List} />
+                    <Route exact path={match.path} component={List} />
                     <Route
                         exact
-                        path="/dashboard/brand/edit/:id"
+                        path={`${match.path}/edit/:id`}
                         component={Edit}
                     />
                     {(user.role === ROLES.Admin ||
                         user.role === ROLES.SuperAdmin) && (
                         <Route
                             exact
-                            path="/dashboard/brand/add"
+                            path={`${match.path}/add`}
                             component={Add}
                         />
                     )}
@@ -50,4 +50,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, actions)(Brand);
+export default withRouter(connect(mapStateToProps, actions)(Brand));
