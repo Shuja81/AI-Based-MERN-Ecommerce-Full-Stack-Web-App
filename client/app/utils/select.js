@@ -8,7 +8,7 @@ export const formatSelectOptions = (data, empty = false, from) => {
   let newSelectOptions = [];
 
   if (data && data.length > 0) {
-    data.map(option => {
+    data.forEach(option => {
       let newOption = {};
       newOption.value = option._id;
       newOption.label = option.name;
@@ -33,7 +33,7 @@ export const unformatSelectOptions = data => {
   let newSelectOptions = [];
 
   if (data && data.length > 0) {
-    data.map(option => {
+    data.forEach(option => {
       let newOption = {};
       newOption._id = option.value;
       newSelectOptions.push(newOption._id);

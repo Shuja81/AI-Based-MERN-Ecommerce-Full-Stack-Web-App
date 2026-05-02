@@ -56,6 +56,12 @@ class Application extends React.PureComponent {
         window.addEventListener("storage", this.handleStorage);
     }
 
+    componentWillUnmount() {
+        document.removeEventListener("keydown", this.handleTabbing);
+        document.removeEventListener("mousedown", this.handleMouseDown);
+        window.removeEventListener("storage", this.handleStorage);
+    }
+
     handleStorage(e) {
         if (e.key === CART_ITEMS) {
             this.props.handleCart();

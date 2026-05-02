@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import analyticsAPI from "../utils/analyticsAPI";
 
 /**
@@ -9,6 +9,8 @@ export const useAnalytics = (type = "sales", query = {}, enabled = true) => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    const queryString = useMemo(() => JSON.stringify(query), [query]);
 
     useEffect(() => {
         if (!enabled) {
@@ -59,7 +61,7 @@ export const useAnalytics = (type = "sales", query = {}, enabled = true) => {
         };
 
         fetchData();
-    }, [enabled, type, JSON.stringify(query)]);
+    }, [enabled, type, queryString]);
 
     return { data, loading, error };
 };

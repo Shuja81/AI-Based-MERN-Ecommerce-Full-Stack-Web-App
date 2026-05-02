@@ -6,10 +6,8 @@
 
 import React from 'react';
 
-import { connect } from 'react-redux';
 import { Row, Col } from 'reactstrap';
 
-import actions from '../../actions';
 import banners from './banners.json';
 import CarouselSlider from '../../components/Common/CarouselSlider';
 import { responsiveOneItemCarousel } from '../../components/Common/CarouselSlider/utils';
@@ -30,7 +28,7 @@ class Homepage extends React.PureComponent {
                 responsive={responsiveOneItemCarousel}
               >
                 {banners.map((item, index) => (
-                  <img key={index} src={item.imageUrl} />
+                  <img key={item._id || index} src={item.imageUrl} />
                 ))}
               </CarouselSlider>
             </div>
@@ -53,8 +51,4 @@ class Homepage extends React.PureComponent {
   }
 }
 
-const mapStateToProps = state => {
-  return {};
-};
-
-export default connect(mapStateToProps, actions)(Homepage);
+export default Homepage;

@@ -22,14 +22,14 @@ class ForgotPassword extends React.PureComponent {
       forgotFormData,
       formErrors,
       forgotPasswordChange,
-      forgotPassowrd
+      forgotPassword
     } = this.props;
 
     if (authenticated) return <Redirect to='/dashboard' />;
 
     const handleSubmit = event => {
       event.preventDefault();
-      forgotPassowrd();
+      forgotPassword();
     };
 
     return (

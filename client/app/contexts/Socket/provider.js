@@ -17,7 +17,6 @@ const SocketProvider = ({ children }) => {
     if (token) {
       sk.auth = { token };
       sk.connect();
-      sk.auth;
       setSocket(sk);
     }
   };
