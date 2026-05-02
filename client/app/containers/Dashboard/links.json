@@ -1,49 +1,182 @@
 {
-  "ROLE ADMIN": [
-    { "to": "", "name": "Account Details", "prefix": "/dashboard" },
-    {
-      "to": "/security",
-      "name": "Account Security",
-      "prefix": "/dashboard",
-      "provider": ["Email"]
-    },
-    { "to": "/address", "name": "Address", "prefix": "/dashboard" },
-    { "to": "/product", "name": "Products", "prefix": "/dashboard" },
-    { "to": "/category", "name": "Categories", "prefix": "/dashboard" },
-    { "to": "/brand", "name": "Brand", "prefix": "/dashboard" },
-    { "to": "/users", "name": "Users", "prefix": "/dashboard" },
-    { "to": "/merchant", "name": "Merchants", "prefix": "/dashboard" },
-    { "to": "/orders", "name": "Orders", "prefix": "/dashboard" },
-    { "to": "/review", "name": "Reviews", "prefix": "/dashboard" },
-    { "to": "/wishlist", "name": "WishList", "prefix": "/dashboard" },
-    { "to": "/support", "name": "Support" }
-  ],
-  "ROLE MERCHANT": [
-    { "to": "", "name": "Account Details", "prefix": "/dashboard" },
-    {
-      "to": "/security",
-      "name": "Account Security",
-      "prefix": "/dashboard",
-      "provider": ["Email"]
-    },
-    { "to": "/address", "name": "Address", "prefix": "/dashboard" },
-    { "to": "/brand", "name": "Brand", "prefix": "/dashboard" },
-    { "to": "/product", "name": "Products", "prefix": "/dashboard" },
-    { "to": "/orders", "name": "Orders", "prefix": "/dashboard" },
-    { "to": "/wishlist", "name": "WishList", "prefix": "/dashboard" },
-    { "to": "/support", "name": "Support" }
-  ],
-  "ROLE MEMBER": [
-    { "to": "", "name": "Account Details", "prefix": "/dashboard" },
-    {
-      "to": "/security",
-      "name": "Account Security",
-      "prefix": "/dashboard",
-      "provider": ["Email"]
-    },
-    { "to": "/address", "name": "Address", "prefix": "/dashboard" },
-    { "to": "/orders", "name": "Orders", "prefix": "/dashboard" },
-    { "to": "/wishlist", "name": "WishList", "prefix": "/dashboard" },
-    { "to": "/support", "name": "Support" }
-  ]
+    "ROLE ADMIN": [
+        {
+            "to": "",
+            "name": "Account Details",
+            "prefix": "/dashboard",
+            "icon": "fa-user"
+        },
+        {
+            "to": "/security",
+            "name": "Account Security",
+            "prefix": "/dashboard",
+            "provider": ["Email"],
+            "icon": "fa-shield"
+        },
+        {
+            "to": "/address",
+            "name": "Address",
+            "prefix": "/dashboard",
+            "icon": "fa-map-marker"
+        },
+        {
+            "to": "/product",
+            "name": "Products",
+            "prefix": "/dashboard",
+            "icon": "fa-box"
+        },
+        {
+            "to": "/category",
+            "name": "Categories",
+            "prefix": "/dashboard",
+            "icon": "fa-tags"
+        },
+        {
+            "to": "/brand",
+            "name": "Brand",
+            "prefix": "/dashboard",
+            "icon": "fa-copyright"
+        },
+        {
+            "to": "/users",
+            "name": "Users",
+            "prefix": "/dashboard",
+            "icon": "fa-users"
+        },
+        {
+            "to": "/merchant",
+            "name": "Merchants",
+            "prefix": "/dashboard",
+            "icon": "fa-store"
+        },
+        {
+            "to": "/orders",
+            "name": "Orders",
+            "prefix": "/dashboard",
+            "icon": "fa-shopping-cart"
+        },
+        {
+            "to": "/review",
+            "name": "Reviews",
+            "prefix": "/dashboard",
+            "icon": "fa-star"
+        },
+        {
+            "to": "/analytics",
+            "name": "Analytics",
+            "prefix": "/dashboard",
+            "icon": "fa-chart-bar"
+        },
+        {
+            "to": "/wishlist",
+            "name": "WishList",
+            "prefix": "/dashboard",
+            "icon": "fa-heart"
+        },
+        { "to": "/support", "name": "Support", "icon": "fa-headset" }
+    ],
+    "ROLE SUPERADMIN": [
+        {
+            "to": "",
+            "name": "Account Details",
+            "prefix": "/dashboard",
+            "icon": "fa-user"
+        },
+        {
+            "to": "/security",
+            "name": "Account Security",
+            "prefix": "/dashboard",
+            "provider": ["Email"],
+            "icon": "fa-shield"
+        },
+        {
+            "to": "/address",
+            "name": "Address",
+            "prefix": "/dashboard",
+            "icon": "fa-map-marker"
+        },
+        {
+            "to": "/product",
+            "name": "Products",
+            "prefix": "/dashboard",
+            "icon": "fa-box"
+        },
+        {
+            "to": "/category",
+            "name": "Categories",
+            "prefix": "/dashboard",
+            "icon": "fa-tags"
+        },
+        {
+            "to": "/brand",
+            "name": "Brand",
+            "prefix": "/dashboard",
+            "icon": "fa-copyright"
+        },
+        {
+            "to": "/users",
+            "name": "Users",
+            "prefix": "/dashboard",
+            "icon": "fa-users"
+        },
+        {
+            "to": "/merchant",
+            "name": "Merchants",
+            "prefix": "/dashboard",
+            "icon": "fa-store"
+        },
+        {
+            "to": "/orders",
+            "name": "Orders",
+            "prefix": "/dashboard",
+            "icon": "fa-shopping-cart"
+        },
+        {
+            "to": "/review",
+            "name": "Reviews",
+            "prefix": "/dashboard",
+            "icon": "fa-star"
+        },
+        {
+            "to": "/analytics",
+            "name": "Analytics",
+            "prefix": "/dashboard",
+            "icon": "fa-chart-bar"
+        },
+        {
+            "to": "/wishlist",
+            "name": "WishList",
+            "prefix": "/dashboard",
+            "icon": "fa-heart"
+        },
+        { "to": "/support", "name": "Support", "icon": "fa-headset" }
+    ],
+    "ROLE MERCHANT": [
+        { "to": "", "name": "Account Details", "prefix": "/dashboard" },
+        {
+            "to": "/security",
+            "name": "Account Security",
+            "prefix": "/dashboard",
+            "provider": ["Email"]
+        },
+        { "to": "/address", "name": "Address", "prefix": "/dashboard" },
+        { "to": "/brand", "name": "Brand", "prefix": "/dashboard" },
+        { "to": "/product", "name": "Products", "prefix": "/dashboard" },
+        { "to": "/orders", "name": "Orders", "prefix": "/dashboard" },
+        { "to": "/wishlist", "name": "WishList", "prefix": "/dashboard" },
+        { "to": "/support", "name": "Support" }
+    ],
+    "ROLE MEMBER": [
+        { "to": "", "name": "Account Details", "prefix": "/dashboard" },
+        {
+            "to": "/security",
+            "name": "Account Security",
+            "prefix": "/dashboard",
+            "provider": ["Email"]
+        },
+        { "to": "/address", "name": "Address", "prefix": "/dashboard" },
+        { "to": "/orders", "name": "Orders", "prefix": "/dashboard" },
+        { "to": "/wishlist", "name": "WishList", "prefix": "/dashboard" },
+        { "to": "/support", "name": "Support" }
+    ]
 }

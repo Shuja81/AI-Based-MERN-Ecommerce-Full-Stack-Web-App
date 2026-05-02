@@ -1,41 +1,46 @@
 // sass variables
 
-// Theme colors
-$theme-green: #00acac;
-$theme-gray: #f8f9fa;
-$theme-bright-gray: #eceef3;
-$theme-dark-gray: #cccccc;
-$theme-athens-gray: #f1f1f2;
-$theme-blue: #2979ff;
-$theme-purple: #727cb6;
-$theme-white: #f6f7f8;
-$theme-light-white: #f0f0f0;
-$theme-light-blue-white: #e8f0fe;
+// Theme colors - Modern Light Ecommerce Theme
+$theme-background: #ffffff;
+$theme-surface: #f8fafc;
+$theme-surface-soft: #f1f5f9;
+$theme-surface-muted: #e2e8f0;
+$theme-border: #e2e8f0;
+$theme-text: #1e293b;
+$theme-muted: #64748b;
+$theme-shadow: rgba(15, 23, 42, 0.08);
+$theme-primary: #3b82f6;
+$theme-primary-dark: #2563eb;
+$theme-accent: #06b6d4;
+$theme-success: #10b981;
+$theme-warning: #f59e0b;
+$theme-danger: #ef4444;
+$theme-white: #ffffff;
+$theme-black: #1e293b;
+$theme-green: $theme-success;
+$theme-gray: #64748b;
+$theme-dark-gray: #475569;
+$theme-light-white: #f8fafc;
+$theme-light-blue: #dbeafe;
+$theme-bright-red: #ef4444;
+$theme-yellow: $theme-warning;
+$theme-blue: $theme-primary;
 
-$theme-black: #323232;
-$theme-light-black: #24292e;
-$theme-orange: #e4853f;
-$theme-yellow: #ffdd57;
-$theme-light-yellow: #fbeeca;
-$theme-pink: #ff3860;
-$theme-light-blue: #4a68aa;
-$theme-bright-red: #fb0000;
+$primary-color: $theme-primary;
+$primary-bg: linear-gradient(135deg, $theme-primary 0%, $theme-accent 100%);
 
-$primary-color: #2962ff;
-$primary-bg: #2962ff;
+$secondary-color: $theme-surface-muted;
+$secondary-bg: $theme-surface-soft;
 
-$secondary-color: #f8f9fa;
-$secondary-bg: #f8f9fa;
-
-$danger-color: #dc3545;
-$danger-bg: #dc3545;
-$danger-hover-bg: #c3081a;
+$danger-color: $theme-danger;
+$danger-bg: $theme-danger;
+$danger-hover-bg: #dc2626;
 
 $dark-bg: $theme-black;
-$dark-hover-bg: $black;
+$dark-hover-bg: #334155;
 
-$default-color: #758696;
-$default-bg: #758696;
+$default-color: $theme-muted;
+$default-bg: $theme-muted;
 
 // standard colors
 $blue: #20a8d8;
@@ -76,48 +81,50 @@ $font-weight-semibold: 600;
 $font-weight-bold: 700;
 
 // layout variables
-$btn-bg: $white;
-$btn-bg-hover: $primary-bg;
-$font-color: #65676b;
-$font-light-color: #00000026;
-$font-custom-color: $theme-black;
-$font-subtext-color: $gray;
-$font-custom-hover-color: $theme-blue;
-$font-hover-color: $black;
-$font-focus-color: $black;
-$font-heading-color: #262626;
-$border-color-default: #e4e6eb;
-$border-color-primary: $theme-bright-gray;
-$border-hover-color: #ced9de;
-$border-focus-color: #bdcbd2;
-$separator-color: #e6e5ea;
-$dark-overflow-bg: #0006;
-$transparent-bg: #3232321f;
-$transparent-gray-bg: #f1f3f4f5;
-$transparent-white-bg: #f1f1f170;
-$hover-bg: #e3e8ea;
-$badge: $red;
-$stars: #adb5bd;
-$stars-active: #ffb302;
-$disabled-bg: #d9dbdea1;
+$btn-bg: $theme-surface-soft;
+$btn-bg-hover: $theme-primary;
+$font-color: $theme-text;
+$font-light-color: $theme-muted;
+$font-text: $theme-text;
+$font-muted: $theme-muted;
+$font-custom-color: $theme-text;
+$font-subtext-color: $theme-muted;
+$font-custom-hover-color: $theme-primary;
+$font-hover-color: $theme-primary-dark;
+$font-focus-color: $theme-primary-dark;
+$font-heading-color: $theme-black;
+$border-color-default: $theme-border;
+$border-color-primary: $theme-border;
+$border-hover-color: $theme-primary;
+$border-focus-color: $theme-primary;
+$separator-color: $theme-surface-muted;
+$dark-overflow-bg: rgba(0, 0, 0, 0.65);
+$transparent-bg: rgba(255, 255, 255, 0.05);
+$transparent-gray-bg: rgba(148, 163, 184, 0.08);
+$transparent-white-bg: rgba(255, 255, 255, 0.08);
+$hover-bg: rgba(91, 125, 255, 0.12);
+$badge: $theme-accent;
+$stars: #cbd5e1;
+$stars-active: #60a5fa;
+$disabled-bg: rgba(148, 163, 184, 0.12);
 
-$outline-color: #7aacfe;
-$validation-color: #dc3545;
-$outline-box-shadow: 0 0 0 3px #159ce466;
-$box-shadow: 0 0 10px 0 #e6e5ea;
-$box-shadow-custom: 0 1px #e6e5ea;
-$box-shadow-primary: 0 1px 2px #00000033;
-$box-shadow-secondary: 0 0 2px #00000033;
-$border-radius-default: 3px;
-$border-radius-primary: 5px;
-$border-radius-circle: 50px;
-$line-height: 1.5;
-$letter-spacing: 0.5px;
+$outline-color: rgba(91, 125, 255, 0.32);
+$validation-color: $danger-color;
+$outline-box-shadow: 0 0 0 3px rgba(91, 125, 255, 0.24);
+$box-shadow: 0 20px 50px rgba(15, 23, 42, 0.22);
+$box-shadow-custom: 0 8px 24px rgba(15, 23, 42, 0.12);
+$box-shadow-primary: 0 1px 2px rgba(0, 0, 0, 0.33);
+$box-shadow-secondary: 0 0 2px rgba(0, 0, 0, 0.33);
+$border-radius-default: 14px;
+$border-radius-primary: 20px;
+$border-radius-circle: 999px;
+$line-height: 1.6;
+$letter-spacing: 0.4px;
 $border-default: 1px solid $border-color-default;
 $border-primary: 1px solid $border-color-primary;
-$layout-max-width: 1200px;
-$layout-transition-speed: 0.3s !default;
-$layout-transition-higher-speed: 0.6s !default;
+$layout-max-width: 1280px;
+$layout-transition-speed: 0.25s !default;
+$layout-transition-higher-speed: 0.45s !default;
 
 // icons
 $twitter: url('/images/social-icons/twitter.svg');

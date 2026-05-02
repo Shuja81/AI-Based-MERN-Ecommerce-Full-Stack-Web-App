@@ -38,7 +38,22 @@ class Dashboard extends React.PureComponent {
                     <Admin
                         user={user}
                         isMenuOpen={isMenuOpen}
-                        links={dashboardLinks[ROLES.Admin]}
+                        links={
+                            user.role === ROLES.Admin
+                                ? dashboardLinks[ROLES.Admin].map((link) => ({
+                                      ...link,
+                                      prefix: "/admin",
+                                  }))
+                                : dashboardLinks[ROLES.SuperAdmin].map(
+                                      (link) => ({
+                                          ...link,
+                                          prefix: "/superadmin",
+                                      }),
+                                  )
+                        }
+                        basePrefix={
+                            user.role === ROLES.Admin ? "/admin" : "/superadmin"
+                        }
                         toggleMenu={toggleDashboardMenu}
                     />
                 ) : user.role === ROLES.Merchant && user.merchant ? (
